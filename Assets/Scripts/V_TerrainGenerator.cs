@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class V_TerrainGenerator : MonoBehaviour
 {
     [SerializeField] private int width;
     [SerializeField] private int depth;
     [SerializeField] private float pointSpacing;
+    [SerializeField] private float maximumHeight;
+    [SerializeField] private Texture2D perlinNoise;
     
     private MeshFilter _meshFilter;
     private MeshRenderer _meshRenderer;
@@ -42,7 +45,7 @@ public class V_TerrainGenerator : MonoBehaviour
         {
             for (int i = 0; i < width; i++)
             {
-                vertices[index] = new Vector3(i * pointSpacing, 0, j * pointSpacing);
+                vertices[index] = new Vector3(i * pointSpacing, Mathf.PerlinNoise(((float)i / (float)width) / 0.1f, ((float)j / (float)depth) / 0.1f) * maximumHeight, j * pointSpacing);
                 index++;
             }
         }
@@ -65,6 +68,7 @@ public class V_TerrainGenerator : MonoBehaviour
         
         _mesh.vertices = vertices;
         _mesh.triangles = triangles;
+        _mesh.RecalculateNormals();
     }
 
     private void OnDrawGizmos()
